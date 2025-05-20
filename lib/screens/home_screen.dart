@@ -7,6 +7,9 @@ import '../screens/profile_screen.dart';
 import '../screens/map_screen.dart';
 import '../screens/popular_destination_detail.dart';
 import '../screens/cart_screen.dart';
+import '../screens/googlemapscreen.dart';
+import 'package:travel_app/generated/l10n.dart';
+
 
 class FriendActivity {
   final String friendName;
@@ -37,65 +40,78 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
-  final List<Destination> destinations = [
-    Destination(
-      name: 'Bali Resort',
-      location: 'Bali, Indonesia',
-      imageUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb',
-      description: 'Enjoy luxury & nature in Bali.',
-      rating: 4.8,
-    ),
-    Destination(
-      name: 'Santorini Escape',
-      location: 'Santorini, Greece',
-      imageUrl: 'https://plus.unsplash.com/premium_photo-1661964149725-fbf14eabd38c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      description: 'Experience the best sunsets in Santorini.',
-      rating: 4.7,
-    ),
-    Destination(
-      name: 'Kyoto Getaway',
-      location: 'Kyoto, Japan',
-      imageUrl: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      description: 'Discover traditional Japanese culture in Kyoto.',
-      rating: 4.6,
-    ),
-  ];
+  late final List<Destination> destinations;
+  late List<Map<String, String>> categories;
+  late List<FriendActivity> friendsActivities;
 
-  final List<Map<String, String>> categories = [
-    {
-      'title': 'Adventure',
-      'imageUrl': 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e',
-      'placesCount': '12 destinations'
-    },
-    {
-      'title': 'Culture',
-      'imageUrl': 'https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1',
-      'placesCount': '18 destinations'
-    },
-    {
-      'title': 'Nature',
-      'imageUrl': 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee',
-      'placesCount': '10 destinations'
-    },
-  ];
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final s = S.of(context);
 
-  final List<FriendActivity> friendsActivities = [
-    FriendActivity(
-      friendName: 'Alice',
-      description: 'Visited Bali and loved it!',
-      avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2',
-    ),
-    FriendActivity(
-      friendName: 'Bob',
-      description: 'Checked in at Santorini, amazing views.',
-      avatarUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d',
-    ),
-    FriendActivity(
-      friendName: 'Charlie',
-      description: 'Exploring Kyoto temples.',
-      avatarUrl: 'https://images.unsplash.com/photo-1568605114967-8130f3a36994',
-    ),
-  ];
+    destinations = [
+      Destination(
+        name: s.destinationBali,
+        location: 'Bali, Indonesia',
+        imageUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb',
+        description: s.descriptionBali,
+        rating: 4.8,
+      ),
+      Destination(
+        name: s.destinationSantorini,
+        location: 'Santorini, Greece',
+        imageUrl: 'https://plus.unsplash.com/premium_photo-1661964149725-fbf14eabd38c?q=80',
+        description: s.descriptionSantorini,
+        rating: 4.7,
+      ),
+      Destination(
+        name: s.destinationKyoto,
+        location: 'Kyoto, Japan',
+        imageUrl: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80',
+        description: s.descriptionKyoto,
+        rating: 4.6,
+      ),
+    ];
+
+    categories = [
+      {
+        'title': s.categoryAdventure,
+        'imageUrl': 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e',
+        'placesCount': s.destinationsCount(12),
+      },
+      {
+        'title': s.categoryCulture,
+        'imageUrl': 'https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1',
+        'placesCount': s.destinationsCount(18),
+      },
+      {
+        'title': s.categoryNature,
+        'imageUrl': 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee',
+        'placesCount': s.destinationsCount(10),
+      },
+    ];
+
+    friendsActivities = [
+      FriendActivity(
+        friendName: 'Alice',
+        description: s.activityAlice,
+        avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2',
+      ),
+      FriendActivity(
+        friendName: 'Bob',
+        description: s.activityBob,
+        avatarUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d',
+      ),
+      FriendActivity(
+        friendName: 'Charlie',
+        description: s.activityCharlie,
+        avatarUrl: 'https://images.unsplash.com/photo-1568605114967-8130f3a36994',
+      ),
+    ];
+
+  }
+
+
 
   Widget _buildPopularDestinations() {
     return Padding(
@@ -103,10 +119,11 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Popular Destinations',
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+           Text(
+            S.of(context).popularDestinations,
+            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           ),
+
           const SizedBox(height: 12),
           SizedBox(
             height: 250,
@@ -211,9 +228,9 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Categories',
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          Text(
+            S.of(context).categories,
+            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 12),
           SizedBox(
@@ -237,10 +254,11 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            "Friends Activity",
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          Text(
+            S.of(context).friendsActivity,
+            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           ),
+
           const SizedBox(height: 12),
           ListView.separated(
             itemCount: friendsActivities.length,
@@ -285,6 +303,7 @@ class _HomeScreenState extends State<HomeScreen> {
     const ProfileScreen(),
     const MapScreen(),
     const CartScreen(),
+    const GoogleMapScreen(),
   ];
 
   @override
@@ -328,37 +347,47 @@ class _HomeScreenState extends State<HomeScreen> {
         index: _selectedIndex,
         children: _pages,
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: (int index) {
-          setState(() {
-            _selectedIndex = index;
-          });
+      bottomNavigationBar: Builder(
+        builder: (context) {
+          final s = S.of(context);
+          return BottomNavigationBar(
+            currentIndex: _selectedIndex,
+            onTap: (int index) {
+              setState(() {
+                _selectedIndex = index;
+              });
+            },
+            type: BottomNavigationBarType.fixed,
+            items: [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.explore),
+                label: s.explore,
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.bookmark),
+                label: s.trips,
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.person),
+                label: s.profile,
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.map),
+                label: s.map,
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.shopping_cart),
+                label: s.cart,
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.location_on),
+                label: s.gmap,
+              ),
+            ],
+          );
         },
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.explore),
-            label: "Explore",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bookmark),
-            label: "Trips",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: "Profile",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.map),
-            label: "Map",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart),
-            label: "Cart",
-          ),
-        ],
       ),
+
     );
   }
 }

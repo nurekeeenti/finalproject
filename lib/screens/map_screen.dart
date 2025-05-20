@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:travel_app/generated/l10n.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({Key? key}) : super(key: key);
@@ -11,16 +12,14 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   Map<String, dynamic>? weatherData;
+  final cityKeys = ["Bali", "Santorini", "Kyoto", "Astana", "Karaganda", "New York"];
 
   Future<Map<String, dynamic>> fetchWeather() async {
     const apiKey = '22fc7c0bf35b45dbb8584648251504';
-    final cities = ["Bali", "Santorini", "Kyoto"];
-
     Map<String, dynamic> result = {};
 
-    for (var city in cities) {
-      final url = Uri.parse(
-          'http://api.weatherapi.com/v1/current.json?key=$apiKey&q=$city&aqi=no');
+    for (var city in cityKeys) {
+      final url = Uri.parse('http://api.weatherapi.com/v1/current.json?key=$apiKey&q=$city&aqi=no');
       try {
         final response = await http.get(url);
         if (response.statusCode == 200) {
@@ -40,7 +39,6 @@ class _MapScreenState extends State<MapScreen> {
     return result;
   }
 
-
   @override
   void initState() {
     super.initState();
@@ -53,29 +51,42 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
+    final localizedNames = {
+      "Bali": s.cityBali,
+      "Santorini": s.citySantorini,
+      "Kyoto": s.cityKyoto,
+      "Astana": s.cityAstana,
+      "Karaganda": s.cityKaraganda,
+      "New York": s.cityNewYork,
+    };
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Map & Weather"),
+        title: Text(s.mapTitle),
       ),
       body: weatherData == null
           ? const Center(child: CircularProgressIndicator())
           : ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          for (var city in ["Bali", "Santorini", "Kyoto"])
+          for (var city in cityKeys)
             Card(
               margin: const EdgeInsets.symmetric(vertical: 8),
               child: ListTile(
                 leading: const Icon(Icons.cloud, size: 32),
                 title: Text(
-                  city,
+                  localizedNames[city] ?? city,
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 subtitle: Text(
-                  "Temp: ${weatherData![city]["temp"]}°C, ${weatherData![city]["description"]}",
+                  s.temperature(
+                    weatherData![city]["temp"].toString(),
+                    weatherData![city]["description"],
+                  ),
                   style: const TextStyle(fontSize: 14),
                 ),
               ),

@@ -5,6 +5,7 @@ import '../providers/app_state.dart';
 import 'login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:travel_app/generated/l10n.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -62,7 +63,7 @@ class _ProfileScreenState extends State<ProfileScreen>
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile'),
+        title: Text(S.of(context).profile),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -70,6 +71,27 @@ class _ProfileScreenState extends State<ProfileScreen>
               appState.logout();
               Navigator.pushReplacementNamed(context, '/login');
             },
+          ),
+          PopupMenuButton<Locale>(
+            icon: const Icon(Icons.language),
+            onSelected: (locale) async {
+              await S.load(locale);
+              setState(() {});
+            },
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: const Locale('en'),
+                child: const Text('English'),
+              ),
+              PopupMenuItem(
+                value: const Locale('ru'),
+                child: const Text('Русский'),
+              ),
+              PopupMenuItem(
+                value: const Locale('kk'),
+                child: const Text('Қазақша'),
+              ),
+            ],
           ),
         ],
       ),
@@ -89,18 +111,18 @@ class _ProfileScreenState extends State<ProfileScreen>
                     ),
                   ),
                   const SizedBox(height: 16),
-                  const Text(
-                    'Average Traveler',
-                    style: TextStyle(
+                  Text(
+                    S.of(context).averageTraveler,
+                    style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    'Experienced Traveler',
-                    style: TextStyle(
+                  Text(
+                    S.of(context).experiencedTraveler,
+                    style: const TextStyle(
                       fontSize: 16,
                       color: Colors.grey,
                     ),
@@ -109,7 +131,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                   const SizedBox(height: 32),
                   Center(
                     child: Text(
-                      'My Favorite Destinations',
+                      S.of(context).myFavorites,
                       style: Theme.of(context)
                           .textTheme
                           .titleLarge
@@ -122,9 +144,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                     builder: (context, state, _) {
                       final favorites = state.favoritePlaces;
                       if (favorites.isEmpty) {
-                        return const Text(
-                          'You have no favorite destinations yet.',
-                          style: TextStyle(fontSize: 16, color: Colors.grey),
+                        return Text(
+                          S.of(context).noFavorites,
+                          style: const TextStyle(fontSize: 16, color: Colors.grey),
                         );
                       }
                       return SizedBox(

@@ -15,6 +15,9 @@ import 'screens/login_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'screens/register_screen.dart';
 import 'router/app_router.dart';
+import 'package:travel_app/generated/l10n.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -72,12 +75,19 @@ class _TravelAppState extends State<TravelApp> {
       ),
       themeMode: _themeMode,
       debugShowCheckedModeBanner: false,
+      localizationsDelegates: const [
+        S.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: S.delegate.supportedLocales,
       routerConfig: createAppRouter(
         onToggleTheme: _toggleTheme,
         onChangeColor: _changeColor,
       ),
-      //
     );
+
   }
 
 }

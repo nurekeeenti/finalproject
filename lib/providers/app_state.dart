@@ -18,16 +18,26 @@ class AppState extends ChangeNotifier {
   }
 
   // ---------- Cart ----------
-  final List<CartItem> cart = [];
+  final List<CartItem> _cart = [];
+
+  List<CartItem> get cart => _cart;
 
   void addToCart(CartItem item) {
-    cart.add(item);
+    _cart.add(item);
     notifyListeners();
   }
 
   void removeFromCart(CartItem item) {
-    cart.remove(item);
+    _cart.remove(item);
     notifyListeners();
+  }
+
+  void updateCartItem(CartItem oldItem, CartItem newItem) {
+    final index = _cart.indexOf(oldItem);
+    if (index != -1) {
+      _cart[index] = newItem;
+      notifyListeners();
+    }
   }
 
   // ---------- Favorites ----------
@@ -43,5 +53,4 @@ class AppState extends ChangeNotifier {
     }
     notifyListeners();
   }
-
 }

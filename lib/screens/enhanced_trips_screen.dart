@@ -4,6 +4,7 @@ import '../models/cart_item.dart';
 import '../providers/app_state.dart';
 import '../db/db_helper.dart';
 import 'profile_screen.dart';
+import 'package:travel_app/generated/l10n.dart';
 
 class Trip {
   final String title;
@@ -28,36 +29,45 @@ class EnhancedTripsScreen extends StatefulWidget {
   State<EnhancedTripsScreen> createState() => _EnhancedTripsScreenState();
 }
 
+
+
 class _EnhancedTripsScreenState extends State<EnhancedTripsScreen> {
-  final List<Trip> trips = [
-    Trip(
-      title: 'Trip to Bali',
-      imageUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb',
-      date: '20/09/2025',
-      description: 'Experience tropical paradise on Bali with beaches, cultural experiences, and adventures.',
-      guests: 2,
-    ),
-    Trip(
-      title: 'Trip to Santorini',
-      imageUrl: 'https://plus.unsplash.com/premium_photo-1661964149725-fbf14eabd38c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      date: '15/10/2025',
-      description: 'Enjoy the breathtaking sunsets, white-washed buildings, and Mediterranean charm of Santorini.',
-      guests: 3,
-    ),
-    Trip(
-      title: 'Trip to Kyoto',
-      imageUrl: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      date: '05/11/2025',
-      description: 'Discover ancient temples, cherry blossoms, and traditional Japanese culture in Kyoto.',
-      guests: 1,
-    ),
-  ];
+  late List<Trip> trips;
+
+  @override
+  void initState() {
+    super.initState();
+    final s = S.current;
+    trips = [
+      Trip(
+        title: s.tripToBali,
+        imageUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb',
+        date: '20/09/2025',
+        description: s.descBali,
+        guests: 2,
+      ),
+      Trip(
+        title: s.tripToSantorini,
+        imageUrl: 'https://plus.unsplash.com/premium_photo-1661964149725-fbf14eabd38c',
+        date: '15/10/2025',
+        description: s.descSantorini,
+        guests: 3,
+      ),
+      Trip(
+        title: s.tripToKyoto,
+        imageUrl: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e',
+        date: '05/11/2025',
+        description: s.descKyoto,
+        guests: 1,
+      ),
+    ];
+  }
 
   String searchQuery = '';
   String sortOption = 'Alphabetical';
 
   List<Trip> get filteredTrips {
-    List<Trip> filtered = trips
+    final filtered = trips
         .where((trip) => trip.title.toLowerCase().contains(searchQuery.toLowerCase()))
         .toList();
 
@@ -72,41 +82,47 @@ class _EnhancedTripsScreenState extends State<EnhancedTripsScreen> {
 
   DateTime _parseDate(String date) {
     final parts = date.split('/');
-    return DateTime(
-      int.parse(parts[2]),
-      int.parse(parts[1]),
-      int.parse(parts[0]),
-    );
+    return DateTime(int.parse(parts[2]), int.parse(parts[1]), int.parse(parts[0]));
   }
 
   final _formKey = GlobalKey<FormState>();
   String? _newTitle;
   DateTime? _newDate;
   double _newGuests = 1;
-  final String _newImageUrl = 'https://images.unsplash.com/photo-1677842296338-eeb8c866d22c?q=80&w=1976&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
+  final String _newImageUrl = 'https://images.unsplash.com/photo-1677842296338-eeb8c866d22c?q=80';
 
   Future<void> _showAddTripModal() async {
     _newTitle = null;
     _newDate = null;
     _newGuests = 1;
+
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       builder: (context) {
+        final s = S.of(context);
         return Padding(
-          padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom, top: 16),
+          padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.all(16),
             child: Form(
               key: _formKey,
               child: Wrap(
                 children: [
-                  const Text('Add New Trip', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
+                  Center(
+                    child: Text(
+                      s.addNewTrip,
+                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                  ),
                   const SizedBox(height: 16),
                   TextFormField(
-                    decoration: const InputDecoration(labelText: 'Trip Title', border: OutlineInputBorder()),
-                    validator: (value) => value == null || value.trim().isEmpty ? 'Please enter trip title' : null,
+                    decoration: InputDecoration(
+                      labelText: s.tripTitle,
+                      border: const OutlineInputBorder(),
+                    ),
+                    validator: (value) =>
+                    value == null || value.trim().isEmpty ? s.enterTripTitle : null,
                     onSaved: (value) => _newTitle = value,
                   ),
                   const SizedBox(height: 16),
@@ -115,18 +131,21 @@ class _EnhancedTripsScreenState extends State<EnhancedTripsScreen> {
                       Expanded(
                         child: Text(
                           _newDate == null
-                              ? 'No date selected'
-                              : 'Date: ${_newDate!.day}/${_newDate!.month}/${_newDate!.year}',
+                              ? s.noDateSelected
+                              : '${s.date}: ${_newDate!.day}/${_newDate!.month}/${_newDate!.year}',
                         ),
                       ),
-                      ElevatedButton(onPressed: _pickDate, child: const Text('Pick Date')),
+                      ElevatedButton(
+                        onPressed: _pickDate,
+                        child: Text(s.pickDate),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 16),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Number of guests: ${_newGuests.toInt()}'),
+                      Text('${s.numGuests} ${_newGuests.toInt()}'),
                       Slider(
                         value: _newGuests,
                         min: 1,
@@ -139,7 +158,10 @@ class _EnhancedTripsScreenState extends State<EnhancedTripsScreen> {
                   ),
                   const SizedBox(height: 16),
                   Center(
-                    child: ElevatedButton(onPressed: _saveTrip, child: const Text('Add Trip')),
+                    child: ElevatedButton(
+                      onPressed: _saveTrip,
+                      child: Text(s.addTrip),
+                    ),
                   ),
                   const SizedBox(height: 16),
                 ],
@@ -165,6 +187,7 @@ class _EnhancedTripsScreenState extends State<EnhancedTripsScreen> {
   }
 
   void _saveTrip() async {
+    final s = S.of(context);
     if (_formKey.currentState!.validate() && _newDate != null) {
       _formKey.currentState!.save();
 
@@ -172,7 +195,7 @@ class _EnhancedTripsScreenState extends State<EnhancedTripsScreen> {
         title: _newTitle!,
         imageUrl: _newImageUrl,
         date: '${_newDate!.day}/${_newDate!.month}/${_newDate!.year}',
-        description: 'New trip added',
+        description: s.newTripDesc,
         guests: _newGuests.toInt(),
       );
 
@@ -195,57 +218,46 @@ class _EnhancedTripsScreenState extends State<EnhancedTripsScreen> {
 
       Navigator.pop(context);
     } else if (_newDate == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please pick a date')),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(s.pleasePickDate)));
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Trips'),
+        title: Text(s.tripsTitle),
         actions: [
           DropdownButton<String>(
             value: sortOption,
             onChanged: (value) => setState(() => sortOption = value!),
-            items: const [
-              DropdownMenuItem(value: 'Alphabetical', child: Text('Sort A-Z')),
-              DropdownMenuItem(value: 'Date', child: Text('Sort by Date')),
+            items: [
+              DropdownMenuItem(value: 'Alphabetical', child: Text(s.sortAZ)),
+              DropdownMenuItem(value: 'Date', child: Text(s.sortDate)),
             ],
           ),
           IconButton(
             icon: const Icon(Icons.person),
-            tooltip: 'Profile',
+            tooltip: s.profile,
             onPressed: () {
-              Navigator.of(context).push(
-                PageRouteBuilder(
-                  transitionDuration: const Duration(milliseconds: 500),
-                  pageBuilder: (_, __, ___) => const ProfileScreen(),
-                  transitionsBuilder: (_, animation, __, child) {
-                    return FadeTransition(
-                      opacity: animation,
-                      child: child,
-                    );
-                  },
-                ),
-              );
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (_) => const ProfileScreen(),
+              ));
             },
           ),
-
-
         ],
       ),
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8),
             child: TextField(
-              decoration: const InputDecoration(
-                labelText: 'Search Trips',
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: s.searchTrips,
+                prefixIcon: const Icon(Icons.search),
+                border: const OutlineInputBorder(),
               ),
               onChanged: (value) => setState(() => searchQuery = value),
             ),
@@ -261,7 +273,7 @@ class _EnhancedTripsScreenState extends State<EnhancedTripsScreen> {
                   onDismissed: (direction) {
                     setState(() => trips.remove(trip));
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('${trip.title} removed')),
+                      SnackBar(content: Text('${trip.title} ${s.removed}')),
                     );
                   },
                   background: Container(
@@ -270,43 +282,7 @@ class _EnhancedTripsScreenState extends State<EnhancedTripsScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: const Icon(Icons.delete, color: Colors.white),
                   ),
-                  child: AnimatedTripCard(
-                    index: index,
-                    child: Card(
-                      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      elevation: 4,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ClipRRect(
-                            borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                            child: Image.network(
-                              trip.imageUrl,
-                              height: 200,
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(trip.title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                                const SizedBox(height: 4),
-                                Text(trip.date, style: const TextStyle(color: Colors.grey, fontSize: 14)),
-                                const SizedBox(height: 8),
-                                Text(trip.description, style: const TextStyle(fontSize: 16)),
-                                const SizedBox(height: 8),
-                                Text('Guests: ${trip.guests}', style: const TextStyle(fontSize: 14)),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                  child: TripCard(trip: trip, index: index),
                 );
               },
             ),
@@ -315,8 +291,56 @@ class _EnhancedTripsScreenState extends State<EnhancedTripsScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddTripModal,
-        tooltip: 'Add Trip',
+        tooltip: s.addTrip,
         child: const Icon(Icons.add),
+      ),
+    );
+  }
+}
+
+class TripCard extends StatelessWidget {
+  final Trip trip;
+  final int index;
+
+  const TripCard({required this.trip, required this.index});
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedTripCard(
+      index: index,
+      child: Card(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        elevation: 4,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+              child: Image.network(
+                trip.imageUrl,
+                height: 200,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(trip.title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 4),
+                  Text(trip.date, style: const TextStyle(color: Colors.grey)),
+                  const SizedBox(height: 8),
+                  Text(trip.description),
+                  const SizedBox(height: 8),
+                  Text(S.of(context).guestsCount(trip.guests)),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -23,22 +23,72 @@ class DBHelper {
     );
   }
 
-  Future _onCreate(Database db, int version) async {
+  Future<void> _onCreate(Database db, int version) async {
     await db.execute('''
-    CREATE TABLE trips(
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      title TEXT,
-      imageUrl TEXT,
-      date TEXT,
-      description TEXT,
-      guests INTEGER
-    )
-  ''');
+      CREATE TABLE trips(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT,
+        imageUrl TEXT,
+        date TEXT,
+        description TEXT,
+        guests INTEGER
+      )
+    ''');
   }
 
+  // Create
   Future<int> insertTrip(Map<String, dynamic> row) async {
     final db = await instance.database;
     return await db.insert('trips', row);
   }
 
+  // Read All
+  Future<List<Map<String, dynamic>>> getAllTrips() async {
+    final db = await instance.database;
+    return await db.query('trips', orderBy: 'id DESC');
+  }
+
+  // Read by ID
+  Future<Map<String, dynamic>?> getTripById(int id) async {
+    final db = await instance.database;
+    final result = await db.query(
+      'trips',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+    return result.isNotEmpty ? result.first : null;
+  }
+
+  // Update
+  Future<int> updateTrip(int id, Map<String, dynamic> row) async {
+    final db = await instance.database;
+    return await db.update(
+      'trips',
+      row,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  // Delete by ID
+  Future<int> deleteTrip(int id) async {
+    final db = await instance.database;
+    return await db.delete(
+      'trips',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  // Delete all
+  Future<int> deleteAllTrips() async {
+    final db = await instance.database;
+    return await db.delete('trips');
+  }
+
+  // Close DB
+  Future<void> close() async {
+    final db = await instance.database;
+    db.close();
+  }
 }

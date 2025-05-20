@@ -10,6 +10,8 @@ import '../screens/profile_screen.dart';
 import '../screens/map_screen.dart';
 import '../providers/app_state.dart';
 import 'package:travel_app/screens/register_screen.dart';
+import '../screens/googlemapscreen.dart';
+
 
 class AppStateRouterListener extends ChangeNotifier {
   AppStateRouterListener() {
@@ -63,6 +65,7 @@ GoRouter createAppRouter({
       GoRoute(path: '/trips', builder: (context, state) => const EnhancedTripsScreen()),
       GoRoute(path: '/profile', builder: (context, state) => const ProfileScreen()),
       GoRoute(path: '/map', builder: (context, state) => const MapScreen()),
+      GoRoute(path: '/google-map', builder: (context, state) => const GoogleMapScreen()),
     ],
   );
 }
